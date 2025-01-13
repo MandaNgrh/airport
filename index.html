@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Airport</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: "Open Sans", sans-serif;
+            background-color: white;
+        }
+
+        .offcanvas-backdrop {
+            display: none !important;
+        }
+
+        .offcanvas {
+            background-color: white;
+        }
+
+        .navbar {
+            z-index: 1051;
+            /* Lebih tinggi dari offcanvas */
+        }
+
+        .bg-custom {
+            background: url(./assets/img/bg_logo.png) no-repeat 0 rgba(0, 110, 187, .7);
+            height: 110px;
+            position: fixed;
+            width: 100%;
+            /* z-index: 99999; */
+        }
+
+        .bg-img-cs {
+            background: #f9f9f9 url(./assets/img/bg_guidancev2.jpg) no-repeat 0 0;
+            min-height: 60vh;
+        }
+
+        .bg-canvas {
+            margin-top: 110px;
+            background-color: rgba(7, 30, 60, .9);
+        }
+
+        .tooltip {
+            /* margin-top: 30px !important; */
+        }
+
+        .banner {
+            height: 400px;
+            overflow-x: hidden;
+        }
+
+        .bg-green {
+            background-color: #66b82e;
+        }
+
+        .bg-green-deep {
+            background-color: #4f9e19;
+        }
+
+        .text-cs-info {
+            color: #0072b9 !important;
+        }
+
+        .bg-cs-info {
+            background-color: #0072b9;
+        }
+
+        .img-magnifier-container {
+            position: relative;
+        }
+
+        /* Awalnya, sembunyikan elemen kaca pembesar */
+        .img-magnifier-glass {
+            position: absolute;
+            border: 3px solid #000;
+            cursor: none;
+            width: 25rem;
+            height: 25rem;
+            display: none;
+            /* Sembunyikan secara default */
+        }
+
+        /* Tampilkan kaca pembesar hanya saat hover pada container */
+        .img-magnifier-container:hover .img-magnifier-glass {
+            display: block;
+        }
+
+        /* Gaya dasar menu */
+        .menu {
+            position: relative;
+            display: inline-block;
+
+        }
+
+        .menu-title {
+            padding: 10px 20px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Gaya daftar menu */
+        .menu-list {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            background-color: hsla(0, 0%, 93%, .9);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            display: none;
+            z-index: 1000;
+            min-width: 350px;
+        }
+
+        .menu-list p a {
+            color: #0072b9;
+        }
+
+        /* Segitiga untuk menu */
+        .menu-list::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent hsla(0, 0%, 93%, .9) transparent;
+            z-index: 1001;
+        }
+
+        /* Tampilkan daftar menu saat judul menu di-hover */
+        .menu-title:hover .menu-list {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-custom  sticky-top">
+        <div class="container-fluid mx-5">
+            <a class="navbar-brand mx-5" href="#">
+                <img src="assets/img/logo-nav.png" alt="logo-nav" class="img-fluid">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin-left: 8rem;">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold text-white" aria-current="page" href="#">EN</a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a class="nav-link active fw-bold text-white" aria-current="page" href="#">|</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold text-white" aria-current="page" href="#">ID</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-5" role="search">
+                    <div class="menu">
+                        <div class="menu-title">
+                            PILIH BANDARA <i class="bi bi-chevron-down"></i>
+                            <div class="menu-list">
+                                <p>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Pilih Bandara">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                </div>
+                                </p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara I Gusti Ngurah Rai</a>
+                                </p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Juanda</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Sultan Hasanuddin</a>
+                                </p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara SAMS Sepinggan</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Frans Kaisiepo</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Adisutjipto</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Internasional
+                                        Lombok</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Sam Ratulangi</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Syamsudin Noor</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Jenderal Ahmad
+                                        Yani</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara El Tari</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Pattimura</a></p>
+                                <p class="text-center"><a href=""
+                                        class="text-decoration-none text-cs-info fw-bold">Bandara Adi Soemarmo</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="text-decoration-none text-white fw-bold border-start py-3 px-4" aria-current="page"
+                        href="#">PERUSAHAAN</a>
+                    <button class="btn border-0 fs-1 text-white" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i
+                            class="bi bi-list"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="offcanvas offcanvas-end bg-canvas" tabindex="-1" id="offcanvasRight"
+        aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-body text-end m-5">
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">INFORMASI PENERBANGAN</a>
+                <!-- <div class="submenu">
+                    <p>Terminal Kedatangan</p>
+                    <p> Terminal Keberangkatan</p>
+                    <p>Informasi Airline</p>
+                    <p>Informasi Penerbangan Terbaru</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">PANDUAN PENERBANGAN</a>
+                <!-- <div class="submenu">
+                    <p>Penerbangan Domestik</p>
+                    <p> Penerbangan Internasional</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">PANDUAN TRANSPORTASI & PARKIR</a>
+                <!-- <div class="submenu">
+                    <p>Parkir Bandara</p>
+                    <p>Transportasi Publik</p>
+                    <p>Transportasi Khusus</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">BELANJA DAN MAKAN</a>
+                <!-- <div class="submenu">
+                    <p>Direktori Belanja & Makanan</p>
+                    </p>Promo & Rekomendasi</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">PETA TERMINAL BANDARA</a>
+                <!-- <div class="submenu">
+                    <p>Terminal Domestik</p>
+                    <p>Terminal Internasional</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">PANDUAN WISATA</a>
+                <!-- <div class="submenu">
+                    <p>Kuliner</p>
+                    <p>Wisata</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">INFORMASI</a>
+                <!-- <div class="submenu">
+                    <p> Terminal Baru Bandara Internasional Ahmad Yani</p>
+                    <p>Pengembangan Bandara</p>
+                    <p>Berita</p>
+                    <p>SURVEI KEPUASAN MASYARAKAT</p>
+                    <p>Publikasi</p>
+                    <p>Info PKBL</p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">KEBIJAKAN</a>
+                <!-- <div class="submenu">
+                    <p>
+
+                        KEBIJAKAN PELAYANAN
+                    </p>
+                    <p>
+
+                        KEBIJAKAN PERUSAHAAN
+                    </p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">KONTAK</a>
+                <!-- <div class="submenu">
+                    <p>
+                        Nomor Ekstensi
+                    </p>
+                    <p>
+                        Hubungi Kami
+                    </p>
+                    <p>
+                        Kuesioner
+                    </p>
+                </div> -->
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">ARSIP KONSULTASI</a>
+            </div>
+            <div class="mb-4">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold">PELAYANAN</a>
+                <!-- <div class="submenu">
+                    <p>
+                        PAS BANDARA
+                    </p>
+                    <p>
+                        SURAT IJIN KERJA
+                    </p>
+                    <p>
+                        TIM
+                    </p>
+                </div> -->
+            </div>
+            <div class="mb-5 mt-5 d-flex gap-4 justify-content-end">
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i class="bi bi-instagram"></i></a>
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i class="bi bi-twitter"></i></a>
+                <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i class="bi bi-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+    <section class="min-vh-50">
+        <img src="assets/img/banner.jpg" alt="" class="img-fluid">
+    </section>
+    <section class="bg-green ">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-white fw-bold ">Terminal Domestik</h1>
+                <h5 class="text-white">> Menuju <b>Terminal Internasional</b></h5>
+                <div class="dropdown-center">
+                    <div class="small text-white">Peta Terminal Bandara Menu</div>
+                    <a class="text-decoration-none text-white h4 dropdown-toggle border-bottom"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,38">
+                        Terminal Domestik
+                    </a>
+                    <ul class="dropdown-menu py-3 px-4">
+                        <li><a class="dropdown-item h5 fw-bold text-cs-info" href="#">Terminal Domestik</a></li>
+                        <li><a class="dropdown-item h5 fw-bold text-cs-info" href="#">Terminal Internasional</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="row align-items-center justify-content-between mb-5">
+                <div class="col-md-6">
+                    <div class=" d-flex align-items-center gap-3">
+                        <img src="assets/img/map_ico.png" alt="" class="img-fluid">
+                        <div class="content">
+                            <h5 class="text-cs-info">MENEMUKAN JALAN DI SEKITAR BANDARA KAMI</h5>
+                            <h3 class="text-cs-info">Terminal Domestik</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select " aria-label="Default select example">
+                        <option value="shopping-directory">Direktori Belanja</option>
+                        <option value="dining-directory">Direktori Makan</option>
+                        <option value="service-directory">Service</option>
+                        <option value="lounge-directory">Lounge</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class=' input-group'>
+                        <input type='text' class='form-control' placeholder='Apa yang sedang Anda cari?'>
+                        <span class='input-group-text'><i class='bi bi-search'></i></span>
+                    </div>
+                </div>
+            </div>
+            <center>
+                <div class="img-magnifier-container">
+                    <img id="myimage" src="assets/img/peta.png" class="w-100">
+                </div>
+            </center>
+            <div class="mt-4 mb-5 text-end">
+                <button class="btn btn-primary px-5"><span class="bi bi-arrow-down me-2"></span>DOWNLOAD PETA</button>
+            </div>
+            <hr class="pb-5">
+        </div>
+    </section>
+    <section class="bg-cs-info">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="text-white fs-4">
+                        INFORMASI BIMBINGAN
+                    </div>
+                    <h1 class="text-white">Terminal Domestik</h1>
+
+                </div>
+                <div class="d-flex align-items-center justify-content-between  gap-5">
+                    <ul class="nav nav-underline" id="newsArticleTabs" role="tablist">
+                        <li class="nav-item  " role="presentation">
+                            <button class="nav-link me-2 fs-6 fw-bold text-white py-5 active" id="news-tab"
+                                data-bs-toggle="tab" data-bs-target="#level1" type="button" role="tab"
+                                aria-controls="level1" aria-selected="true">
+                                LEVEL 1
+                            </button>
+                        </li>
+                        <li class="nav-item  " role="presentation">
+                            <button class="nav-link me-2  fs-6 fw-bold text-white py-5" id="article-tab"
+                                data-bs-toggle="tab" data-bs-target="#level2" type="button" role="tab"
+                                aria-controls="level2" aria-selected="false">LEVEL 2</button>
+                        </li>
+                        <li class="nav-item  " role="presentation">
+                            <button class="nav-link  fs-6 fw-bold text-white py-5" id="articles-tab"
+                                data-bs-toggle="tab" data-bs-target="#level3" type="button" role="tab"
+                                aria-controls="level3" aria-selected="false">MEZANINE</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-img-cs">
+        <div class="container py-5">
+            <div class="tab-content" id="newsArticleTabContent">
+                <div class="tab-pane fade show active" id="level1" role="tabpanel" aria-labelledby="news-tab">
+                    <div class="accordion accordion-flush" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                                    aria-controls="collapseOne">
+                                    LAYANAN
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>Bank BNI</p>
+                                    <p>Total Baggage Solution</p>
+                                    <p>Money Changer</p>
+                                    <p>Tourist Information Center</p>
+                                    <p>TRAC</p>
+                                    <p>Airport Taxi</p>
+                                    <p>ATM BCA</p>
+                                    <p>ATM BNI</p>
+                                    <p>ATM Mandiri</p>
+                                    <p>ATM BRI</p>
+                                    <p>ATM BTN</p>
+                                    <p>ATM BJB</p>
+                                    <p>ATM Cimb Niaga</p>
+                                    <p>ATM Bukopin</p>
+                                    <p>ATM Bank Jateng</p>
+                                    <p>ATM Bank Mega</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                                    aria-controls="collapseTwo">
+                                    MAKANAN DAN MINUMAN
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>Timbo Cafe</p>
+                                    <p> X-Side Eat</p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="level2" role="tabpanel" aria-labelledby="article-tab">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                    aria-controls="flush-collapseOne">
+                                    MAKANAN DAN MINUMAN
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">My Indonesia
+                                    Magersari
+                                    Bread Bakers
+                                    Roti'O
+                                    Baquland
+                                    Starbucks
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false"
+                                    aria-controls="flush-collapseTwo">
+                                    RETAIL
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    Periplus
+                                    Batik Keris
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseThree"
+                                    aria-expanded="false" aria-controls="flush-collapseThree">
+                                    LAYANAN
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThree" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="level3" role="tabpanel" aria-labelledby="article-tab">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                    aria-controls="flush-collapseOne">
+                                    MAKANAN DAN MINUMAN
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">Concordia Lounge</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-cs-info" style="background: url(./assets/img/bg_foot.jpg) repeat-x;">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between">
+                <div class="content-1">
+                    <h4 class="fw-bold text-white">INFORMASI <br> PENERBANGAN</h4>
+                    <p>
+                        <a href="" class="text-decoration-none text-white">Terminal Kedatangan</a>
+                    </p>
+                    <p>
+                        <a href="" class="text-decoration-none text-white"> Terminal Keberangkatan</a>
+                    </p>
+                    <p>
+                        <a href="" class="text-decoration-none text-white"> Informasi Airline</a>
+                    </p>
+                    <p>
+                        <a href="" class="text-decoration-none text-white"> Informasi Penerbangan Terbaru</a>
+                    </p>
+                </div>
+                <div class="content-1">
+                    <h4 class="fw-bold text-white">PANDUAN <br> PENERBANGAN</h5>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Penerbangan Domestik</a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Penerbangan Internasional</a>
+                        </p>
+                </div>
+                <div class="content-1">
+                    <h4 class="fw-bold text-white">BELANJA DAN<br> MAKAN</h5>
+
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Direktori Belanja & Makanan
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Promo & Rekomendasi</a>
+                        </p>
+                </div>
+                <div class="content-1">
+                    <h4 class="fw-bold text-white">LINK LAINNYA
+                        </h5>
+
+
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Parkir & transport
+
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Peta Terminal Bandara
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Petunjuk Pariwisata
+
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Berita
+
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Hubungi Kami
+
+
+                            </a>
+                        </p>
+                        <p>
+                            <a href="" class="text-decoration-none text-white">Download
+
+
+
+                            </a>
+                        </p>
+                </div>
+                <div class="content-1">
+                    <p class="text-white">Maju dengan berita terbaru kami & update!</p>
+                    <div class="input-group mb-3 w-75">
+                        <input type="text" class="form-control" placeholder="Alamat Email">
+                        <span class="input-group-text"><i class="bi bi-envelope text-cs-info"></i></span>
+                    </div>
+                    <div class="d-flex gap-5">
+                        <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i
+                                class="bi bi-instagram"></i></a>
+                        <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i
+                                class="bi bi-twitter"></i></a>
+                        <a href="" class="text-decoration-none text-white fs-4 fw-bold"><i
+                                class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        /* Execute the magnify function: */
+        magnify("myimage", 3);
+        /* Specify the id of the image, and the strength of the magnifier glass: */
+    </script>
+</body>
+
+</html>
