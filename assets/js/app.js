@@ -58,7 +58,7 @@ function magnify(imgID, zoom) {
     return {x : x, y : y};
   }
 }
-magnify("image1", 2); // Zoom level 2x
+// magnify("image1", 2); // Zoom level 2x
 magnify("image2", 2);
 magnify("image3", 2);
 magnify("image4", 2);
