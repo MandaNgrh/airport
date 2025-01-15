@@ -1,64 +1,64 @@
 function magnify(imgID, zoom) {
-  const img = document.getElementById(imgID);
+  var img, glass, w, h, bw;
+  img = document.getElementById(imgID);
 
   /* Create magnifier glass: */
-  const glass = document.createElement("DIV");
+  glass = document.createElement("DIV");
   glass.setAttribute("class", "img-magnifier-glass");
 
   /* Insert magnifier glass: */
   img.parentElement.insertBefore(glass, img);
 
-  /* Use natural dimensions for scaling accuracy */
-  const naturalWidth = img.naturalWidth;
-  const naturalHeight = img.naturalHeight;
-
   /* Set background properties for the magnifier glass: */
   glass.style.backgroundImage = "url('" + img.src + "')";
   glass.style.backgroundRepeat = "no-repeat";
-  glass.style.backgroundSize = `${naturalWidth * zoom}px ${naturalHeight * zoom}px`;
+  glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+  bw = 3;
+  w = glass.offsetWidth / 2;
+  h = glass.offsetHeight / 2;
 
-  const bw = 3; // Border width
-  const w = glass.offsetWidth / 2;
-  const h = glass.offsetHeight / 2;
-
-  /* Add event listeners for mouse and touch movements: */
+  /* Execute a function when someone moves the magnifier glass over the image: */
   glass.addEventListener("mousemove", moveMagnifier);
   img.addEventListener("mousemove", moveMagnifier);
+
+  /*and also for touch screens:*/
   glass.addEventListener("touchmove", moveMagnifier);
   img.addEventListener("touchmove", moveMagnifier);
-
   function moveMagnifier(e) {
+    var pos, x, y;
+    /* Prevent any other actions that may occur when moving over the image */
     e.preventDefault();
-
-    const pos = getCursorPos(e);
-    let x = pos.x;
-    let y = pos.y;
-
+    /* Get the cursor's x and y positions: */
+    pos = getCursorPos(e);
+    x = pos.x;
+    y = pos.y;
     /* Prevent the magnifier glass from being positioned outside the image: */
-    x = Math.max(w / zoom, Math.min(x, img.width - w / zoom));
-    y = Math.max(h / zoom, Math.min(y, img.height - h / zoom));
-
+    if (x > img.width - (w / zoom)) {x = img.width - (w / zoom);}
+    if (x < w / zoom) {x = w / zoom;}
+    if (y > img.height - (h / zoom)) {y = img.height - (h / zoom);}
+    if (y < h / zoom) {y = h / zoom;}
     /* Set the position of the magnifier glass: */
-    glass.style.left = `${x - w}px`;
-    glass.style.top = `${y - h}px`;
-
+    glass.style.left = (x - w) + "px";
+    glass.style.top = (y - h) + "px";
     /* Display what the magnifier glass "sees": */
-    const scaleX = naturalWidth / img.width; // Scaling factor for X
-    const scaleY = naturalHeight / img.height; // Scaling factor for Y
-
-    glass.style.backgroundPosition = `-${(x * scaleX * zoom - w + bw)}px -${(y * scaleY * zoom - h + bw)}px`;
+    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
   }
 
   function getCursorPos(e) {
-    const a = img.getBoundingClientRect();
-    const x = e.pageX - a.left - window.pageXOffset;
-    const y = e.pageY - a.top - window.pageYOffset;
-    return { x, y };
+    var a, x = 0, y = 0;
+    e = e || window.event;
+    /* Get the x and y positions of the image: */
+    a = img.getBoundingClientRect();
+    /* Calculate the cursor's x and y coordinates, relative to the image: */
+    x = e.pageX - a.left;
+    y = e.pageY - a.top;
+    /* Consider any page scrolling: */
+    x = x - window.pageXOffset;
+    y = y - window.pageYOffset;
+    return {x : x, y : y};
   }
 }
-
-/* Apply the magnify effect to multiple images */
-magnify("image1", 2); // Example: 2x zoom
+magnify("image1", 2); // Zoom level 2x
 magnify("image2", 2);
 magnify("image3", 2);
 magnify("image4", 2);
