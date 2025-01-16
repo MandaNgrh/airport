@@ -149,9 +149,29 @@
             display: block;
         }
     </style>
+    <style>
+        /* Untuk menyembunyikan branding Google Translate */
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+    </style>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'id',
+                // includedLanguages: 'id,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
 </head>
 
 <body>
+
     <nav class="navbar navbar-expand-lg bg-custom  sticky-top">
         <div class="container-fluid mx-5">
             <a class="navbar-brand mx-5" href="#">
@@ -172,6 +192,11 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active fw-bold text-white" aria-current="page" href="#">ID</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold text-white" aria-current="page" href="#">
+                            <div id="google_translate_element" class="text-end mb-3"></div>
+                        </a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-5" role="search">
@@ -367,7 +392,7 @@
                                 <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
                                     aria-controls="collapseOne">
-                                   DIREKTORY BELANJA & MAKAN
+                                    DIREKTORY BELANJA & MAKAN
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse "
@@ -437,7 +462,7 @@
                                 <button class="accordion-button collapsed fw-bold text-cs-info" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
                                     aria-controls="flush-collapseOne">
-                                   DIREKTORY BELANJA & MAKAN
+                                    DIREKTORY BELANJA & MAKAN
                                 </button>
                             </h2>
                             <div id="flush-collapseOne" class="accordion-collapse collapse"
@@ -698,6 +723,8 @@
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     </script>
     <script src="assets/js/app.js"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 
 </html>
